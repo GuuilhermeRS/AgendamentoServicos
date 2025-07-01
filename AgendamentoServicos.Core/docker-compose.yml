@@ -1,0 +1,19 @@
+services:
+  db:
+    image: mysql:8.0
+    container_name: mysql_agendamento
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: teste123
+      MYSQL_DATABASE: agendamento_db
+    ports:
+      - "3306:3306"
+    volumes:
+      # Mapeia o script de inicialização
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+      # Mapeia o volume nomeado para a pasta de dados do MySQL (linha descomentada)
+      - mysql_data:/var/lib/mysql
+
+# Declara o volume nomeado
+volumes:
+  mysql_data:
