@@ -9,11 +9,8 @@ services:
     ports:
       - "3306:3306"
     volumes:
-      # Mapeia o script de inicialização
       - ./init.sql:/docker-entrypoint-initdb.d/init.sql
-      # Mapeia o volume nomeado para a pasta de dados do MySQL (linha descomentada)
       - mysql_data:/var/lib/mysql
 
-# Declara o volume nomeado
 volumes:
   mysql_data:

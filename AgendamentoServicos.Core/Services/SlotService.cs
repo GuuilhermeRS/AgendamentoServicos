@@ -7,15 +7,13 @@ namespace AgendamentoServicos.Core.Services;
 
 public class SlotService(Context context) : ISlotService
 {
-    // Método privado para reutilizar a lógica de projeção para DTO
     private IQueryable<SlotDto> GetSlotsAsDto()
     {
         return context.Slots
-            .AsNoTracking()
             .Select(s => new SlotDto(
                 s.Id,
                 s.Date,
-                s.Status.ToString(), // Converte o enum para string
+                s.Status,
                 s.Description,
                 new CustomerInfo(s.Customer.Id, s.Customer.Name),
                 new ProfessionalInfo(s.Professional.Id, s.Professional.Name, s.Professional.Specialty),
@@ -25,28 +23,59 @@ public class SlotService(Context context) : ISlotService
 
     public async Task<IEnumerable<SlotDto>> GetAll()
     {
-        return await GetSlotsAsDto().ToListAsync();
+        var ret = await context.Slots
+            .Include(slot => slot.Customer)
+            .Include(slot => slot.Professional)
+            .Include(slot => slot.Service)
+            .ToListAsync();
+
+        return ret.Select(s => new SlotDto(
+            s.Id,
+            s.Date,
+            s.Status,
+            s.Description,
+            new CustomerInfo(s.Customer.Id, s.Customer.Name),
+            new ProfessionalInfo(s.Professional.Id, s.Professional.Name, s.Professional.Specialty),
+            new ServiceInfo(s.Service.Id, s.Service.Name, s.Service.Duration, s.Service.Value)
+        ));
     }
 
     public async Task<SlotDto?> GetById(int id)
     {
-        return await GetSlotsAsDto().FirstOrDefaultAsync(s => s.Id == id);
+        var ret = await context.Slots
+            .Include(slot => slot.Customer)
+            .Include(slot => slot.Professional)
+            .Include(slot => slot.Service)
+            .FirstOrDefaultAsync(s => s.Id == id);
+
+        if (ret is null)
+            return null;
+
+        return new SlotDto(
+            ret.Id,
+            ret.Date,
+            ret.Status,
+            ret.Description,
+            new CustomerInfo(ret.Customer.Id, ret.Customer.Name),
+            new ProfessionalInfo(ret.Professional.Id, ret.Professional.Name, ret.Professional.Specialty),
+            new ServiceInfo(ret.Service.Id, ret.Service.Name, ret.Service.Duration, ret.Service.Value)
+        );
     }
 
     public async Task<Slot> Create(CreateSlotDto dto)
     {
-        // 1. Buscar as entidades relacionadas no banco de dados
         var customer = await context.Customers.FindAsync(dto.CustomerId);
+        if (customer is null)
+            throw new ArgumentException("Cliente inválido.");
+        
         var professional = await context.Professionals.FindAsync(dto.ProfessionalId);
+        if (professional is null)
+            throw new ArgumentException("Profissional inválido.");
+        
         var service = await context.Services.FindAsync(dto.ServiceId);
+        if (service is null)
+            throw new ArgumentException("Serviço inválido.");
 
-        // 2. Validar se todas as entidades foram encontradas
-        if (customer is null || professional is null || service is null)
-        {
-            throw new ArgumentException("Cliente, Profissional ou Serviço inválido.");
-        }
-
-        // 3. Criar a entidade Slot usando o construtor, que garante a consistência
         var slot = new Slot(dto.Date, customer, professional, service, dto.Description);
 
         context.Slots.Add(slot);

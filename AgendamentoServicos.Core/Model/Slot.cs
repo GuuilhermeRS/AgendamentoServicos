@@ -12,6 +12,8 @@ public class Slot
     public Professional Professional { get; private set; }
     public int ServiceId { get; private set; }
     public Service Service { get; private set; }
+    
+    private Slot() { }
 
     public Slot(DateTime date, Customer customer, Professional professional, Service service, string description)
     {
