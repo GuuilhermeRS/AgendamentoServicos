@@ -11,6 +11,20 @@ services:
     volumes:
       - ./init.sql:/docker-entrypoint-initdb.d/init.sql
       - mysql_data:/var/lib/mysql
+  
+  api:
+    build:
+      context: .
+      dockerfile: AgendamentoServicos.Api/Dockerfile
+    container_name: api_agendamento
+    restart: always
+    ports:
+      - "8080:8080"
+    environment:
+      - ASPNETCORE_URLS=http://+:8080
+      - ConnectionStrings__DefaultConnection=server=db;Port=3306;database=agendamento_db;uid=root;pwd=teste123;
+    depends_on:
+      - db
 
 volumes:
   mysql_data:

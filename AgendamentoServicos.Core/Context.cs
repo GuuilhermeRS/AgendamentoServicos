@@ -4,17 +4,12 @@ using Microsoft.EntityFrameworkCore;
 
 namespace AgendamentoServicos.Core;
 
-public class Context : DbContext
+public class Context(DbContextOptions<Context> options) : DbContext(options)
 {
-    private static string ConnectionString => "server=localhost;database=agendamento_db;uid=root;pwd=teste123;";
-    
     internal DbSet<Customer> Customers { get; set; }
     internal DbSet<Professional> Professionals { get; set; }
     internal DbSet<Service> Services { get; set; }
     internal DbSet<Slot> Slots { get; set; }
-
-    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder) =>
-        optionsBuilder.UseMySql(ConnectionString, new MySqlServerVersion(new Version(8, 0, 20)));
     
     protected override void OnModelCreating(ModelBuilder modelBuilder) {
         modelBuilder.Entity<Customer>(entity =>

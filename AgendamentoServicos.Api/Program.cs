@@ -2,6 +2,7 @@ using System.Text.Json;
 using AgendamentoServicos.Core;
 using AgendamentoServicos.Core.Interfaces.Services;
 using AgendamentoServicos.Core.Services;
+using Microsoft.EntityFrameworkCore;
 
 namespace AgendamentoServicos.Api;
 
@@ -10,10 +11,16 @@ public abstract class Program
     public static void Main(string[] args)
     {
         var builder = WebApplication.CreateBuilder(args);
+        var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 
         builder.Services.AddControllers()
             .AddJsonOptions(options => options.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase);
+        
         builder.Services.AddOpenApi();
+        builder.Services.AddDbContext<Context>(options =>
+        {
+            options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString));
+        });
 
         builder.Services.AddScoped<Context>();
         builder.Services.AddScoped<ICustomerService, CustomerService>();
@@ -25,10 +32,10 @@ public abstract class Program
         builder.Services.AddSwaggerGen();
 
         var app = builder.Build();
+        app.UseSwagger();
+        app.UseSwaggerUI();
         if (app.Environment.IsDevelopment())
         {
-            app.UseSwagger();
-            app.UseSwaggerUI();
             app.MapOpenApi();
         }
 
