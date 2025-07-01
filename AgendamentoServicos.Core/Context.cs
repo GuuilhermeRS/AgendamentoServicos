@@ -8,10 +8,10 @@ public class Context : DbContext
 {
     private static string ConnectionString => "server=localhost;database=agendamento_db;uid=root;pwd=teste123;";
     
-    public DbSet<Customer> Customers { get; set; }
-    public DbSet<Professional> Professionals { get; set; }
-    public DbSet<Service> Services { get; set; }
-    public DbSet<Slot> Slots { get; set; }
+    internal DbSet<Customer> Customers { get; set; }
+    internal DbSet<Professional> Professionals { get; set; }
+    internal DbSet<Service> Services { get; set; }
+    internal DbSet<Slot> Slots { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder) =>
         optionsBuilder.UseMySql(ConnectionString, new MySqlServerVersion(new Version(8, 0, 20)));

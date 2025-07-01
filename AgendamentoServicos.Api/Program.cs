@@ -1,4 +1,7 @@
+using System.Text.Json;
 using AgendamentoServicos.Core;
+using AgendamentoServicos.Core.Interfaces.Services;
+using AgendamentoServicos.Core.Services;
 
 namespace AgendamentoServicos.Api;
 
@@ -8,15 +11,21 @@ public abstract class Program
     {
         var builder = WebApplication.CreateBuilder(args);
 
-        builder.Services.AddControllers();
+        builder.Services.AddControllers()
+            .AddJsonOptions(options => options.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase);
         builder.Services.AddOpenApi();
 
         builder.Services.AddScoped<Context>();
+        builder.Services.AddScoped<ICustomerService, CustomerService>();
+
+        builder.Services.AddEndpointsApiExplorer();
+        builder.Services.AddSwaggerGen();
 
         var app = builder.Build();
-
         if (app.Environment.IsDevelopment())
         {
+            app.UseSwagger();
+            app.UseSwaggerUI();
             app.MapOpenApi();
         }
 
