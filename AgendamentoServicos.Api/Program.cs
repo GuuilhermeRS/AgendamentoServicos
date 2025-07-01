@@ -17,6 +17,9 @@ public abstract class Program
 
         builder.Services.AddScoped<Context>();
         builder.Services.AddScoped<ICustomerService, CustomerService>();
+        builder.Services.AddScoped<IServiceService, ServiceService>();
+        builder.Services.AddScoped<IServiceService, ServiceService>();
+        builder.Services.AddScoped<ISlotService, SlotService>();
 
         builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddSwaggerGen();
