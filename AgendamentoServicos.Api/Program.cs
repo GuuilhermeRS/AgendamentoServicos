@@ -15,7 +15,17 @@ public abstract class Program
 
         builder.Services.AddControllers()
             .AddJsonOptions(options => options.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase);
-        
+
+        builder.Services.AddCors(options =>
+        {
+            options.AddPolicy("AllowAny",
+                policy =>
+                {
+                    policy.AllowAnyOrigin()
+                        .AllowAnyHeader()
+                        .AllowAnyMethod();
+                });
+        });
         builder.Services.AddOpenApi();
         builder.Services.AddDbContext<Context>(options =>
         {
@@ -32,6 +42,7 @@ public abstract class Program
         builder.Services.AddSwaggerGen();
 
         var app = builder.Build();
+        app.UseCors("AllowAny");
         app.UseSwagger();
         app.UseSwaggerUI();
         if (app.Environment.IsDevelopment())
