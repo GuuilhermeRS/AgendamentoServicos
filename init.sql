@@ -28,7 +28,7 @@ create table `slot` (
     id int not null auto_increment primary key,
     date datetime not null,
     description text,
-    status varchar(50) not null,
+    status int not null,
     customer_id int null,
     professional_id int not null,
     service_id int not null,

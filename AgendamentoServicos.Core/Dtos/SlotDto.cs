@@ -1,9 +1,11 @@
+using AgendamentoServicos.Core.Model;
+
 namespace AgendamentoServicos.Core.Dtos;
 
 public record SlotDto (
     int Id,
     DateTime Date,
-    string Status,
+    SlotStatus Status,
     string? Description,
     CustomerInfo Customer,
     ProfessionalInfo Professional,
