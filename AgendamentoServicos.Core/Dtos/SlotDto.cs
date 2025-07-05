@@ -7,6 +7,6 @@ public record SlotDto (
     DateTime Date,
     SlotStatus Status,
     string? Description,
-    CustomerInfo Customer,
+    CustomerInfo? Customer,
     ProfessionalInfo Professional,
     ServiceInfo Service);

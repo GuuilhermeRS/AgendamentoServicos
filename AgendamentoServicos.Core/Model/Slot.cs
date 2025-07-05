@@ -6,8 +6,8 @@ public class Slot
     public DateTime Date { get; private set; }
     public string Description { get; private set; }
     public SlotStatus Status { get; private set; }
-    public int CustomerId { get; private set; }
-    public Customer Customer { get; private set; }
+    public int? CustomerId { get; private set; }
+    public Customer? Customer { get; private set; }
     public int ProfessionalId { get; private set; }
     public Professional Professional { get; private set; }
     public int ServiceId { get; private set; }

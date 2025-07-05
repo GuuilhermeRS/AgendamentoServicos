@@ -7,20 +7,6 @@ namespace AgendamentoServicos.Core.Services;
 
 public class SlotService(Context context) : ISlotService
 {
-    private IQueryable<SlotDto> GetSlotsAsDto()
-    {
-        return context.Slots
-            .Select(s => new SlotDto(
-                s.Id,
-                s.Date,
-                s.Status,
-                s.Description,
-                new CustomerInfo(s.Customer.Id, s.Customer.Name),
-                new ProfessionalInfo(s.Professional.Id, s.Professional.Name, s.Professional.Specialty),
-                new ServiceInfo(s.Service.Id, s.Service.Name, s.Service.Duration, s.Service.Value)
-            ));
-    }
-
     public async Task<IEnumerable<SlotDto>> GetAll()
     {
         var ret = await context.Slots
@@ -34,7 +20,7 @@ public class SlotService(Context context) : ISlotService
             s.Date,
             s.Status,
             s.Description,
-            new CustomerInfo(s.Customer.Id, s.Customer.Name),
+            s.Customer is not null ? new CustomerInfo(s.Customer.Id, s.Customer.Name) : null,
             new ProfessionalInfo(s.Professional.Id, s.Professional.Name, s.Professional.Specialty),
             new ServiceInfo(s.Service.Id, s.Service.Name, s.Service.Duration, s.Service.Value)
         ));
@@ -56,7 +42,7 @@ public class SlotService(Context context) : ISlotService
             ret.Date,
             ret.Status,
             ret.Description,
-            new CustomerInfo(ret.Customer.Id, ret.Customer.Name),
+            ret.Customer is not null ? new CustomerInfo(ret.Customer.Id, ret.Customer.Name) : null,
             new ProfessionalInfo(ret.Professional.Id, ret.Professional.Name, ret.Professional.Specialty),
             new ServiceInfo(ret.Service.Id, ret.Service.Name, ret.Service.Duration, ret.Service.Value)
         );
