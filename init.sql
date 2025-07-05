@@ -146,3 +146,30 @@ end $$
 
 delimiter ;
 
+
+create user 'admin_geral'@'%' identified by 'admin123';
+grant all privileges on *.* to 'admin_geral'@'%' with grant option;
+
+create user 'gerente'@'%' identified by 'gerente123';
+grant select, insert, update, delete on *.* to 'gerente'@'%';
+
+create user 'operacional_escrita'@'%' identified by 'oprescrita123';
+grant select, insert, update on `customer` to 'operacional_escrita'@'%';
+grant select, insert, update on `professional` to 'operacional_escrita'@'%';
+grant select, insert, update on `slot` to 'operacional_escrita'@'%';
+
+create user 'operacional_leitura'@'%' identified by 'oprleitura123';
+grant select on `customer` to 'operacional_leitura'@'%';
+grant select on `professional` to 'operacional_leitura'@'%';
+grant select on `slot` to 'operacional_leitura'@'%';
+
+create user 'convidado'@'%' identified by 'convidado123';
+grant select on `vw_slot_details` to 'convidado'@'%';
+grant select on `vw_professional_billing` to 'convidado'@'%';
+
+create user 'auditor'@'%' identified by 'auditor123';
+grant select on `transaction_log` to 'auditor'@'%';
+grant execute on procedure `sp_create_available_slots` to 'auditor'@'%';
+grant execute on function `fn_get_end_slot_time` to 'auditor'@'%';
+
+flush  privileges;
