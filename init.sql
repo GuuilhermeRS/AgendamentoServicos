@@ -79,7 +79,7 @@ create view `vw_professional_billing` as
     from slot s
         join professional p on s.professional_id = p.id
         join service srv on s.service_id = srv.id
-    where s.status = 'confirmed';
+    where s.status = 4; -- completado
 
 delimiter $$
 create procedure `sp_create_available_slots`(
@@ -110,9 +110,9 @@ begin
                     and hour(date_add(slot_time, interval v_service_duration minute)) >= 8
                     and hour(date_add(slot_time, interval v_service_duration minute)) < 18
            )
-           select ps.slot_time, 'available', p_professional_id, p_service_id, null, 'Horario Disponivel'
+           select ps.slot_time, 1, p_professional_id, p_service_id, null, 'Horario Disponivel'
            from potential_slots ps
-                left join slot booked_slots on ps.slot_time = booked_slots.date and booked_slots.professional_id = p_professional_id and booked_slots.status <> 'cancelled'
+                left join slot booked_slots on ps.slot_time = booked_slots.date and booked_slots.professional_id = p_professional_id and booked_slots.status <> 3 -- Cancelado
            where booked_slots.id is null;
            
 end $$

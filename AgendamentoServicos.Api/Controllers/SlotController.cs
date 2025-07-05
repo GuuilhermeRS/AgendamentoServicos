@@ -14,6 +14,35 @@ public class SlotController(ISlotService service) : ControllerBase
         var slots = await service.GetAll();
         return Ok(slots);
     }
+    
+    [HttpGet, Route("Available")]
+    public async Task<IActionResult> GetAllAvailable([FromQuery] int professionalId, [FromQuery] int serviceId)
+    {
+        var slots = await service.GetAllAvailableSlots(professionalId, serviceId);
+        return Ok(slots);
+    }
+    
+    [HttpPost, Route("Schedule")]
+    public async Task<IActionResult> Schedule([FromBody] ScheduleSlotDto dto)
+    {
+        try
+        {
+            var slot = await service.Schedule(dto);
+            return Ok(slot);
+        }
+        catch (KeyNotFoundException ex)
+        {
+            return NotFound(ex.Message);
+        }
+        catch (InvalidOperationException ex)
+        {
+            return BadRequest(ex.Message);
+        }
+        catch (ArgumentException ex)
+        {
+            return BadRequest(ex.Message);
+        }
+    }
 
     [HttpGet("{id:int}")]
     public async Task<IActionResult> GetById(int id)

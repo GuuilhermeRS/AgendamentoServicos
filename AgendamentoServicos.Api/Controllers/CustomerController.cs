@@ -8,6 +8,13 @@ namespace AgendamentoServicos.Api.Controllers;
 [Route("[controller]")]
 public class CustomerController(ICustomerService service) : ControllerBase
 {
+    [HttpGet]
+    public async Task<IActionResult> GetAll()
+    {
+        var customers = await service.Get();
+        return Ok(customers);
+    }
+    
     [HttpGet("{id:int}")]
     public async Task<IActionResult> Get(int id)
     {

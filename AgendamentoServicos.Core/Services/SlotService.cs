@@ -15,15 +15,41 @@ public class SlotService(Context context) : ISlotService
             .Include(slot => slot.Service)
             .ToListAsync();
 
-        return ret.Select(s => new SlotDto(
-            s.Id,
-            s.Date,
-            s.Status,
-            s.Description,
-            s.Customer is not null ? new CustomerInfo(s.Customer.Id, s.Customer.Name) : null,
-            new ProfessionalInfo(s.Professional.Id, s.Professional.Name, s.Professional.Specialty),
-            new ServiceInfo(s.Service.Id, s.Service.Name, s.Service.Duration, s.Service.Value)
-        ));
+        return ret.Select(SlotDto.Create);
+    }
+
+    public async Task<IEnumerable<SlotDto>> GetAllAvailableSlots(int professionalId, int serviceId)
+    {
+        var ret = await context.Slots
+            .Include(s => s.Professional)
+            .Include(s => s.Service)
+            .Where(s => s.Status == SlotStatus.Available && !s.CustomerId.HasValue)
+            .ToListAsync();
+
+        return ret.Select(SlotDto.Create);
+    }
+
+    public async Task<SlotDto> Schedule(ScheduleSlotDto dto)
+    {
+        var slot = await context.Slots
+            .Include(s => s.Professional)
+            .Include(s => s.Service)
+            .FirstOrDefaultAsync(s => s.Id == dto.SlotId);
+        
+        if (slot is null)
+            throw new KeyNotFoundException("Agendamento não encontrado.");
+        
+        if (slot.Status != SlotStatus.Available)
+            throw new InvalidOperationException("Agendamento não disponível para agendamento.");
+        
+        var customer = await context.Customers.FindAsync(dto.CustomerId);
+        if (customer is null)
+            throw new ArgumentException("Cliente inválido.");
+
+        slot.Schedule(customer);
+        await context.SaveChangesAsync();
+
+        return SlotDto.Create(slot);
     }
 
     public async Task<SlotDto?> GetById(int id)

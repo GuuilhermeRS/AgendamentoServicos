@@ -1,10 +1,17 @@
+using AgendamentoServicos.Core.Dtos;
 using AgendamentoServicos.Core.Interfaces.Services;
 using AgendamentoServicos.Core.Model;
+using Microsoft.EntityFrameworkCore;
 
 namespace AgendamentoServicos.Core.Services;
 
 public class CustomerService(Context context) : ICustomerService
 {
+    public async Task<IEnumerable<Customer>> Get()
+    {
+        return await context.Customers.ToListAsync();
+    }
+    
     public async Task<Customer?> Get(int id)
     {
         return await context.Customers.FindAsync(id);

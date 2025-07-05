@@ -24,6 +24,12 @@ public class Slot
         Description = description ?? string.Empty;
         Status = SlotStatus.Scheduled;
     }
+
+    public void Schedule(Customer customer)
+    {
+        Customer = customer ?? throw new ArgumentNullException(nameof(customer));
+        Status = SlotStatus.Scheduled;
+    }
     
     public void Cancel()
     {
